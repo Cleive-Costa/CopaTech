@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Copa Tech - Painel de Líderes</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Orbitron (Arcade / Tech 80s) e Rajdhani (UI legível e futurista) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            arcade: {
+              black: '#030811',
+              darker: '#06101e',
+              dark: '#0a1a30',
+              card: '#0d223f',
+              border: '#163b6b',
+              glow: '#00f0ff',
+              cyan: '#00d2ff',
+              blue: '#0070f3',
+              deepBlue: '#003b8e'
+            }
+          },
+          fontFamily: {
+            arcade: ['Orbitron', 'sans-serif'],
+            tech: ['Rajdhani', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #030811;
+      color: #e2f1ff;
+      font-family: 'Rajdhani', sans-serif;
+      background-image: 
+        radial-gradient(circle at 50% 0%, #0c2b55 0%, #030811 75%);
+      background-attachment: fixed;
+    }
+
+    /* Neon logo glow matching the Copa Tech signage */
+    .copatech-logo {
+      font-family: 'Orbitron', sans-serif;
+      text-transform: none;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-shadow:
+        0 0 4px #ffffff,
+        0 0 10px #00f0ff,
+        0 0 20px #00b4d8,
+        0 0 40px #0077b6,
+        0 0 70px #023e8a;
+    }
+
+    .neon-border {
+      border: 1px solid #00f0ff;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.35), inset 0 0 12px rgba(0, 240, 255, 0.15);
+    }
+
+    .neon-pill-active {
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #06101e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #0070f3;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00f0ff;
+    }
+  </style>
+</head>
+<body class="min-h-screen relative flex flex-col selection:bg-cyan-500 selection:text-black">
+
+  <header class="border-b border-arcade-border/80 bg-arcade-darker/90 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-lg bg-arcade-dark flex items-center justify-center border border-arcade-glow/60 shadow-[0_0_10px_rgba(0,240,255,0.4)]">
+          <i class="fa-solid fa-gamepad text-arcade-glow text-lg"></i>
+        </div>
+        <div>
+          <h1 class="copatech-logo text-2xl sm:text-3xl font-black">CopaTech</h1>
+          <p class="text-xs text-arcade-cyan font-arcade tracking-wider uppercase opacity-80">Painel Geral de Líderes</p>
+        </div>
+      </div>
+
+      <!-- Quick stats bar -->
+      <div class="flex items-center gap-3 w-full sm:w-auto justify-around sm:justify-end">
+        <div class="bg-arcade-dark/80 px-3 py-1.5 rounded-lg border border-arcade-border text-center min-w-[85px]">
+          <span class="text-[10px] text-gray-400 font-arcade uppercase block">Total</span>
+          <span id="stat-total" class="text-xl font-bold font-arcade text-white">0</span>
+        </div>
+        <div class="bg-arcade-dark/80 px-3 py-1.5 rounded-lg border border-cyan-500/40 text-center min-w-[85px] shadow-[0_0_8px_rgba(0,240,255,0.2)]">
+          <span class="text-[10px] text-arcade-glow font-arcade uppercase block">Disponíveis</span>
+          <span id="stat-available" class="text-xl font-bold font-arcade text-arcade-glow">0</span>
+        </div>
+        <div class="bg-arcade-dark/80 px-3 py-1.5 rounded-lg border border-blue-900/60 text-center min-w-[85px]">
+          <span class="text-[10px] text-blue-300/60 font-arcade uppercase block">Indisponíveis</span>
+          <span id="stat-unavailable" class="text-xl font-bold font-arcade text-blue-300/60">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-1 space-y-6">
+    <!-- Top Action & Filter Panel -->
+    <div class="bg-arcade-darker/80 border border-arcade-border/80 rounded-xl p-4 shadow-xl backdrop-blur-sm">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+        <!-- Search bar -->
+        <div class="relative md:col-span-4">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-arcade-cyan text-sm"></i>
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Pesquisar por nome ou turma..." 
+            class="w-full pl-10 pr-4 py-2.5 bg-arcade-dark text-white rounded-lg border border-arcade-border focus:border-arcade-glow focus:outline-none focus:ring-1 focus:ring-arcade-glow text-sm font-tech"
+          >
+        </div>
+
+        <!-- Filter by Status -->
+        <div class="md:col-span-3 flex items-center bg-arcade-dark p-1 rounded-lg border border-arcade-border text-xs font-arcade">
+          <button onclick="setStatusFilter('all')" id="filter-all" class="flex-1 py-1.5 rounded-md transition text-center bg-arcade-glow text-black font-bold">TODOS</button>
+          <button onclick="setStatusFilter('available')" id="filter-available" class="flex-1 py-1.5 rounded-md transition text-center text-gray-300 hover:text-white">ON</button>
+          <button onclick="setStatusFilter('unavailable')" id="filter-unavailable" class="flex-1 py-1.5 rounded-md transition text-center text-gray-300 hover:text-white">OFF</button>
+        </div>
+
+        <!-- Filter by Turma -->
+        <div class="md:col-span-3">
+          <select 
+            id="turma-filter" 
+            onchange="renderParticipants()" 
+            class="w-full px-3 py-2.5 bg-arcade-dark text-cyan-200 rounded-lg border border-arcade-border focus:border-arcade-glow focus:outline-none text-sm font-tech"
+          >
+            <option value="ALL">Todas as Turmas</option>
+            <option value="Tech A">Turma: Tech A</option>
+            <option value="Tech B">Turma: Tech B</option>
+            <option value="Tech C">Turma: Tech C</option>
+            <option value="Sem Turma">Sem Turma</option>
+          </select>
+        </div>
+
+        <!-- Add Participant Button -->
+        <div class="md:col-span-2">
+          <button 
+            onclick="openAddModal()" 
+            class="w-full py-2.5 px-4 bg-arcade-deepBlue hover:bg-arcade-blue text-white rounded-lg border border-arcade-glow/70 transition flex items-center justify-center gap-2 font-arcade text-xs tracking-wider shadow-[0_0_12px_rgba(0,112,243,0.4)]"
+          >
+            <i class="fa-solid fa-plus text-arcade-glow"></i> NOVO
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-3">
+      <div class="flex items-center justify-between text-xs font-arcade text-arcade-cyan tracking-wider px-1">
+        <span>PARTICIPANTES EM ORDEM ALFABÉTICA (<span id="visible-count">0</span>)</span>
+        <button onclick="resetDefaultsConfirm()" class="text-blue-400/60 hover:text-cyan-300 transition text-[11px] underline">
+          Restaurar Lista Original
+        </button>
+      </div>
+
+      <!-- Container cards / rows -->
+      <div id="participants-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="hidden text-center py-16 bg-arcade-darker/40 border border-dashed border-arcade-border rounded-xl">
+        <i class="fa-solid fa-user-slash text-4xl text-blue-500/40 mb-3"></i>
+        <p class="font-arcade text-sm text-cyan-200/80">Nenhum jogador encontrado</p>
+        <p class="text-xs text-gray-400 mt-1">Ajuste os filtros ou adicione um novo participante.</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-arcade-dark border border-arcade-glow/80 rounded-xl w-full max-w-md p-6 relative shadow-[0_0_30px_rgba(0,240,255,0.25)]">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-arcade-glow transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-id-card text-arcade-glow"></i>
+        <h2 id="modal-title" class="font-arcade text-lg text-white font-bold tracking-wide">Adicionar Participante</h2>
+      </div>
+
+      <form id="participant-form" onsubmit="saveParticipant(event)" class="space-y-4">
+        <input type="hidden" id="edit-id">
+
+        <div>
+          <label class="block text-xs font-arcade text-cyan-300 mb-1">Nome Completo</label>
+          <input 
+            type="text" 
+            id="form-name" 
+            required 
+            placeholder="Ex: Rafael Mendes" 
+            class="w-full px-3 py-2 bg-arcade-darker text-white rounded-lg border border-arcade-border focus:border-arcade-glow focus:outline-none text-sm font-tech"
+          >
+        </div>
+
+        <div>
+          <label class="block text-xs font-arcade text-cyan-300 mb-1">Turma</label>
+          <select 
+            id="form-turma" 
+            class="w-full px-3 py-2 bg-arcade-darker text-white rounded-lg border border-arcade-border focus:border-arcade-glow focus:outline-none text-sm font-tech"
+          >
+            <option value="Tech A">Tech A</option>
+            <option value="Tech B">Tech B</option>
+            <option value="Tech C">Tech C</option>
+            <option value="Sem Turma">Sem Turma</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-arcade text-cyan-300 mb-1">WhatsApp / Contato</label>
+          <input 
+            type="text" 
+            id="form-contact" 
+            placeholder="Ex: 19999999999 (apenas números ou texto)" 
+            class="w-full px-3 py-2 bg-arcade-darker text-white rounded-lg border border-arcade-border focus:border-arcade-glow focus:outline-none text-sm font-tech"
+          >
+        </div>
+
+        <div>
+          <label class="block text-xs font-arcade text-cyan-300 mb-1">Status de Disponibilidade</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="cursor-pointer border border-arcade-border rounded-lg p-2.5 flex items-center justify-center gap-2 has-[:checked]:border-arcade-glow has-[:checked]:bg-cyan-950/40">
+              <input type="radio" name="form-status" value="available" checked class="accent-cyan-400">
+              <span class="text-xs font-arcade text-arcade-glow">Disponível</span>
+            </label>
+            <label class="cursor-pointer border border-arcade-border rounded-lg p-2.5 flex items-center justify-center gap-2 has-[:checked]:border-blue-700 has-[:checked]:bg-blue-950/40">
+              <input type="radio" name="form-status" value="unavailable" class="accent-blue-500">
+              <span class="text-xs font-arcade text-gray-400">Indisponível</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button 
+            type="button" 
+            onclick="closeModal()" 
+            class="flex-1 py-2 rounded-lg bg-arcade-darker border border-arcade-border text-gray-300 hover:text-white font-arcade text-xs transition"
+          >
+            CANCELAR
+          </button>
+          <button 
+            type="submit" 
+            class="flex-1 py-2 rounded-lg bg-arcade-blue hover:bg-cyan-500 hover:text-black text-white font-arcade text-xs font-bold transition shadow-[0_0_12px_rgba(0,240,255,0.4)]"
+          >
+            SALVAR JOGADOR
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-arcade-dark border border-arcade-glow px-4 py-2.5 rounded-lg shadow-[0_0_15px_rgba(0,240,255,0.4)] flex items-center gap-2 text-xs font-arcade text-cyan-200">
+    <i class="fa-solid fa-circle-check text-arcade-glow"></i>
+    <span id="toast-msg">Mensagem</span>
+  </div>
+
+  <script>
+    // Initial raw list provided by the user
+    const INITIAL_NAMES = [
+      "Cleive dos Santos Costa",
+      "Leonardo Rosseti",
+      "Lucas Freitas",
+      "Philipe",
+      "Rafael Mendes",
+      "Alisson",
+      "Gabriel Ciloé",
+      "Gustavo",
+      "Kauã",
+      "Kevilly Vitória",
+      "Kristian Apaza",
+      "Leonardo Portugal",
+      "Luis Otávio",
+      "Luisa Felix",
+      "Luiz Gustavo",
+      "Nathan Jr",
+      "Pedro Valença",
+      "Rafael Lindquist",
+      "Rafael Nicolas",
+      "Victor",
+      "Bruno",
+      "Pedro",
+      "Jennifer",
+      "Renan",
+      "Lucas"
+    ];
+
+    // Build standard initial data sorted alphabetically
+    function generateInitialData() {
+      // Sort alphabetically ignoring accents & case
+      const sortedNames = [...INITIAL_NAMES].sort((a, b) => 
+        a.localeCompare(b, 'pt-BR', { sensitivity: 'base' })
+      );
+
+      const defaultTurmas = ["Tech A", "Tech B", "Tech C"];
+
+      return sortedNames.map((name, index) => ({
+        id: 'user_' + Date.now() + '_' + index,
+        name: name,
+        turma: defaultTurmas[index % defaultTurmas.length],
+        contact: "", // editable
+        available: true // default available
+      }));
+    }
+
+    // State
+    let participants = [];
+    let currentStatusFilter = 'all'; // 'all', 'available', 'unavailable'
+
+    // Load from LocalStorage or seed initial
+    function loadParticipants() {
+      const stored = localStorage.getItem('copatech_participants_v1');
+      if (stored) {
+        try {
+          participants = JSON.parse(stored);
+        } catch (e) {
+          participants = generateInitialData();
+          saveToStorage();
+        }
+      } else {
+        participants = generateInitialData();
+        saveToStorage();
+      }
+      renderParticipants();
+    }
+
+    function saveToStorage() {
+      localStorage.setItem('copatech_participants_v1', JSON.stringify(participants));
+      updateStats();
+    }
+
+    function renderParticipants() {
+      const container = document.getElementById('participants-list');
+      const emptyState = document.getElementById('empty-state');
+      const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+      const turmaFilter = document.getElementById('turma-filter').value;
+
+      // Sort alphabetically before filtering
+      participants.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
+
+      // Filter
+      const filtered = participants.filter(person => {
+        const matchesSearch = person.name.toLowerCase().includes(searchTerm) || 
+                              person.turma.toLowerCase().includes(searchTerm);
+        
+        let matchesStatus = true;
+        if (currentStatusFilter === 'available') matchesStatus = person.available === true;
+        if (currentStatusFilter === 'unavailable') matchesStatus = person.available === false;
+
+        let matchesTurma = true;
+        if (turmaFilter !== 'ALL') matchesTurma = person.turma === turmaFilter;
+
+        return matchesSearch && matchesStatus && matchesTurma;
+      });
+
+      document.getElementById('visible-count').textContent = filtered.length;
+      updateStats();
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.innerHTML = filtered.map(p => {
+        const isAvail = p.available;
+        const statusBorder = isAvail 
+          ? 'border-arcade-border/80 hover:border-arcade-glow/70 shadow-[0_4px_16px_rgba(0,112,243,0.15)]' 
+          : 'border-blue-950/40 opacity-70 hover:opacity-100';
+        
+        const badgeClasses = isAvail 
+          ? 'bg-cyan-500/20 text-arcade-glow border border-arcade-glow/60 shadow-[0_0_8px_rgba(0,240,255,0.4)]' 
+          : 'bg-blue-950/50 text-blue-400/50 border border-blue-900/60';
+
+        const whatsNumber = p.contact ? p.contact.replace(/\D/g, '') : '';
+        const whatsUrl = whatsNumber ? `https://wa.me/55${whatsNumber}` : null;
+
+        return `
+          <div class="bg-arcade-card/90 rounded-xl p-4 border ${statusBorder} transition-all duration-200 relative group flex flex-col justify-between">
+            <div>
+              <!-- Top Row: Name and Status Badge -->
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <div class="w-8 h-8 rounded-full ${isAvail ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40' : 'bg-gray-800 text-gray-500 border border-gray-700'} flex items-center justify-center text-xs font-arcade font-bold shrink-0">
+                    ${getInitials(p.name)}
+                  </div>
+                  <h3 class="font-bold text-base text-white truncate group-hover:text-arcade-glow transition">
+                    ${escapeHtml(p.name)}
+                  </h3>
+                </div>
+                
+                <span class="px-2 py-0.5 rounded text-[10px] font-arcade uppercase tracking-wider shrink-0 ${badgeClasses}">
+                  ${isAvail ? 'DISPONÍVEL' : 'INDISPONÍVEL'}
+                </span>
+              </div>
+
+              <!-- Turma and Contact Info -->
+              <div class="space-y-1.5 text-xs text-cyan-100/70 mb-4 pl-10">
+                <div class="flex items-center gap-2">
+                  <span class="text-arcade-cyan font-arcade text-[10px] uppercase">Turma:</span>
+                  <span class="bg-arcade-dark px-2 py-0.5 rounded border border-arcade-border/80 text-white font-tech text-xs">${escapeHtml(p.turma || 'Sem Turma')}</span>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                  <span class="text-arcade-cyan font-arcade text-[10px] uppercase">Contato:</span>
+                  ${p.contact ? `
+                    <span class="text-white font-mono text-xs">${escapeHtml(p.contact)}</span>
+                    ${whatsUrl ? `
+                      <a href="${whatsUrl}" target="_blank" rel="noopener noreferrer" title="Chamar no WhatsApp" class="text-green-400 hover:text-green-300 ml-1">
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                      </a>
+                    ` : ''}
+                  ` : `
+                    <span class="text-blue-400/50 italic text-[11px]">Não cadastrado</span>
+                  `}
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Controls at Bottom -->
+            <div class="pt-3 border-t border-arcade-border/40 flex items-center justify-between gap-2 mt-auto">
+              <!-- Quick Toggle Status -->
+              <button 
+                onclick="toggleStatus('${p.id}')" 
+                class="flex-1 py-1.5 px-2 rounded-lg text-xs font-arcade transition flex items-center justify-center gap-1.5 ${isAvail ? 'bg-blue-950/60 hover:bg-blue-900/60 text-blue-200 border border-blue-700/50' : 'bg-cyan-950/80 hover:bg-cyan-900/80 text-arcade-glow border border-arcade-glow/50'}"
+              >
+                <i class="fa-solid ${isAvail ? 'fa-user-xmark' : 'fa-user-check'} text-[11px]"></i>
+                ${isAvail ? 'Marcar Ausente' : 'Marcar Presente'}
+              </button>
+
+              <!-- Edit Button -->
+              <button 
+                onclick="openEditModal('${p.id}')" 
+                title="Editar participante" 
+                class="w-8 h-8 rounded-lg bg-arcade-dark hover:bg-arcade-blue text-arcade-cyan hover:text-white border border-arcade-border flex items-center justify-center text-xs transition"
+              >
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+
+              <!-- Delete Button -->
+              <button 
+                onclick="deleteParticipant('${p.id}')" 
+                title="Excluir" 
+                class="w-8 h-8 rounded-lg bg-arcade-dark hover:bg-red-950/70 text-blue-300/40 hover:text-red-400 border border-arcade-border hover:border-red-900 flex items-center justify-center text-xs transition"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateStats() {
+      const total = participants.length;
+      const available = participants.filter(p => p.available).length;
+      const unavailable = total - available;
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-available').textContent = available;
+      document.getElementById('stat-unavailable').textContent = unavailable;
+    }
+
+    function toggleStatus(id) {
+      const person = participants.find(p => p.id === id);
+      if (person) {
+        person.available = !person.available;
+        saveToStorage();
+        renderParticipants();
+        showToast(`${person.name}: status alterado para ${person.available ? 'Disponível' : 'Indisponível'}`);
+      }
+    }
+
+    function setStatusFilter(filter) {
+      currentStatusFilter = filter;
+      
+      const buttons = {
+        all: document.getElementById('filter-all'),
+        available: document.getElementById('filter-available'),
+        unavailable: document.getElementById('filter-unavailable')
+      };
+
+      Object.keys(buttons).forEach(key => {
+        if (key === filter) {
+          buttons[key].className = "flex-1 py-1.5 rounded-md transition text-center bg-arcade-glow text-black font-bold font-arcade";
+        } else {
+          buttons[key].className = "flex-1 py-1.5 rounded-md transition text-center text-gray-300 hover:text-white font-arcade";
+        }
+      });
+
+      renderParticipants();
+    }
+
+    function getInitials(name) {
+      const parts = name.trim().split(' ');
+      if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    function escapeHtml(string) {
+      if (!string) return '';
+      return String(string)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function openAddModal() {
+      document.getElementById('edit-id').value = '';
+      document.getElementById('form-name').value = '';
+      document.getElementById('form-turma').value = 'Tech A';
+      document.getElementById('form-contact').value = '';
+      document.querySelector('input[name="form-status"][value="available"]').checked = true;
+      document.getElementById('modal-title').textContent = 'Novo Participante';
+      
+      const modal = document.getElementById('modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function openEditModal(id) {
+      const person = participants.find(p => p.id === id);
+      if (!person) return;
+
+      document.getElementById('edit-id').value = person.id;
+      document.getElementById('form-name').value = person.name;
+      document.getElementById('form-turma').value = person.turma || 'Tech A';
+      document.getElementById('form-contact').value = person.contact || '';
+      
+      if (person.available) {
+        document.querySelector('input[name="form-status"][value="available"]').checked = true;
+      } else {
+        document.querySelector('input[name="form-status"][value="unavailable"]').checked = true;
+      }
+
+      document.getElementById('modal-title').textContent = 'Editar Participante';
+      const modal = document.getElementById('modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function saveParticipant(e) {
+      e.preventDefault();
+      const editId = document.getElementById('edit-id').value;
+      const name = document.getElementById('form-name').value.trim();
+      const turma = document.getElementById('form-turma').value;
+      const contact = document.getElementById('form-contact').value.trim();
+      const available = document.querySelector('input[name="form-status"]:checked').value === 'available';
+
+      if (!name) return;
+
+      if (editId) {
+        // Edit existing
+        const index = participants.findIndex(p => p.id === editId);
+        if (index !== -1) {
+          participants[index].name = name;
+          participants[index].turma = turma;
+          participants[index].contact = contact;
+          participants[index].available = available;
+          showToast('Participante atualizado com sucesso!');
+        }
+      } else {
+        // Add new
+        participants.push({
+          id: 'user_' + Date.now(),
+          name: name,
+          turma: turma,
+          contact: contact,
+          available: available
+        });
+        showToast('Novo participante adicionado!');
+      }
+
+      saveToStorage();
+      closeModal();
+      renderParticipants();
+    }
+
+    function deleteParticipant(id) {
+      const p = participants.find(item => item.id === id);
+      if (!p) return;
+      
+      // Inline custom confirmation toast instead of alert()
+      const confirmed = window.confirm ? confirm(`Remover "${p.name}" da gincana?`) : true;
+      if (confirmed) {
+        participants = participants.filter(item => item.id !== id);
+        saveToStorage();
+        renderParticipants();
+        showToast(`"${p.name}" removido.`);
+      }
+    }
+
+    function resetDefaultsConfirm() {
+      if (confirm("Deseja restaurar a lista alfabética original inicial da Copa Tech? Alterações personalizadas serão reiniciadas.")) {
+        participants = generateInitialData();
+        saveToStorage();
+        renderParticipants();
+        showToast('Lista restaurada com sucesso!');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3000);
+    }
+
+    // Search input event
+    document.getElementById('search-input').addEventListener('input', () => {
+      renderParticipants();
+    });
+
+    // Close modal on Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Initial load
+    window.onload = function() {
+      loadParticipants();
+    };
+  </script>
+</body>
+</html>
