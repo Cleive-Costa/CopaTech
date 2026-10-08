@@ -27,8 +27,9 @@
       --status-convocado: #00e5ff;
       --status-sem-equipe: #ffb703;
       --status-ausente: #64748b;
+      --status-org: #f59e0b;
 
-      /* Cores distintas por turma */
+      /* Cores por turma */
       --tag-ec2: #00f0ff;
       --tag-ec4: #38bdf8;
       --tag-ec6: #818cf8;
@@ -63,7 +64,6 @@
       margin: 0 auto;
     }
 
-    /* HEADER */
     header {
       text-align: center;
       margin-bottom: 1.8rem;
@@ -101,7 +101,6 @@
       letter-spacing: 1px;
     }
 
-    /* NAVEGAÇÃO DE ABAS */
     .nav-tabs {
       display: flex;
       justify-content: center;
@@ -136,7 +135,6 @@
       box-shadow: 0 0 15px rgba(0, 240, 255, 0.35);
     }
 
-    /* PAINEL DE CONTAGEM */
     .stats-bar {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -167,6 +165,7 @@
 
     .stat-card.convocados::before { background: var(--status-convocado); }
     .stat-card.sem-equipe::before { background: var(--status-sem-equipe); }
+    .stat-card.organizacao::before { background: var(--status-org); }
     .stat-card.ausentes::before { background: var(--status-ausente); }
 
     .stat-number {
@@ -178,6 +177,7 @@
 
     .stat-card.convocados .stat-number { color: var(--status-convocado); }
     .stat-card.sem-equipe .stat-number { color: var(--status-sem-equipe); }
+    .stat-card.organizacao .stat-number { color: var(--status-org); }
     .stat-card.ausentes .stat-number { color: var(--status-ausente); }
 
     .stat-label {
@@ -189,7 +189,6 @@
       margin-top: 0.2rem;
     }
 
-    /* CONTROLES & FILTROS */
     .controls-panel {
       background: var(--bg-surface);
       border: 1px solid var(--border-blue);
@@ -278,7 +277,6 @@
       color: #fff;
     }
 
-    /* GRID DE PARTICIPANTES */
     .players-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -306,6 +304,7 @@
 
     .player-card.status-convocado { border-left: 4px solid var(--status-convocado); }
     .player-card.status-sem-equipe { border-left: 4px solid var(--status-sem-equipe); }
+    .player-card.status-org { border-left: 4px solid var(--status-org); }
     .player-card.status-ausente { border-left: 4px solid var(--status-ausente); opacity: 0.65; }
 
     .player-header {
@@ -345,6 +344,13 @@
       color: var(--status-sem-equipe);
     }
 
+    .status-org .badge-status {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--status-org);
+      color: var(--status-org);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+    }
+
     .status-ausente .badge-status {
       background: rgba(100, 116, 139, 0.15);
       border: 1px solid var(--status-ausente);
@@ -357,7 +363,6 @@
       gap: 0.4rem;
     }
 
-    /* CORES DISTINTAS POR TURMA */
     .turma-tag {
       padding: 0.25rem 0.6rem;
       border-radius: 4px;
@@ -397,7 +402,6 @@
       color: var(--tag-si4);
     }
 
-    /* ABA DE EQUIPES (LÍDERES) */
     .teams-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -412,6 +416,11 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       display: flex;
       flex-direction: column;
+    }
+
+    .team-card.org-card {
+      border-color: rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
     }
 
     .team-header {
@@ -431,6 +440,10 @@
       letter-spacing: 1px;
     }
 
+    .team-card.org-card .team-title {
+      color: var(--status-org);
+    }
+
     .team-count {
       font-size: 0.85rem;
       font-weight: 700;
@@ -439,6 +452,12 @@
       padding: 0.2rem 0.6rem;
       border-radius: 12px;
       border: 1px solid rgba(0, 195, 255, 0.3);
+    }
+
+    .team-card.org-card .team-count {
+      border-color: rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.15);
+      color: #fde68a;
     }
 
     .team-members-list {
@@ -510,13 +529,11 @@
       <p class="subtitle">Quadro Informativo de Participantes & Escalações</p>
     </header>
 
-    <!-- NAVEGAÇÃO ENTRE AS ABAS -->
     <div class="nav-tabs">
       <button class="tab-btn active" data-tab="tab-participantes">Todos os Participantes</button>
-      <button class="tab-btn" data-tab="tab-equipes">Equipes & Líderes</button>
+      <button class="tab-btn" data-tab="tab-equipes">Equipes & Organização</button>
     </div>
 
-    <!-- PAINEL DE CONTAGEM REAL -->
     <div class="stats-bar">
       <div class="stat-card">
         <div class="stat-number" id="totalCount">0</div>
@@ -525,6 +542,10 @@
       <div class="stat-card convocados">
         <div class="stat-number" id="convocadosCount">0</div>
         <div class="stat-label">Convocados</div>
+      </div>
+      <div class="stat-card organizacao">
+        <div class="stat-number" id="orgCount">0</div>
+        <div class="stat-label">Organização</div>
       </div>
       <div class="stat-card sem-equipe">
         <div class="stat-number" id="semEquipeCount">0</div>
@@ -536,7 +557,7 @@
       </div>
     </div>
 
-    <!-- ==================== ABA 1: PARTICIPANTES ==================== -->
+    <!-- ABA 1: PARTICIPANTES -->
     <section id="tab-participantes" class="tab-content active">
       <div class="controls-panel">
         <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nome do participante...">
@@ -546,6 +567,7 @@
             <span class="filter-label">Status:</span>
             <button class="btn-filter active" data-status="ALL">Todos</button>
             <button class="btn-filter" data-status="CONVOCADO">Convocados</button>
+            <button class="btn-filter" data-status="ORGANIZACAO">Organização</button>
             <button class="btn-filter" data-status="SEM_EQUIPE">Sem Equipe</button>
             <button class="btn-filter" data-status="AUSENTE">Ausentes</button>
           </div>
@@ -567,7 +589,7 @@
       <main class="players-grid" id="playersGrid"></main>
     </section>
 
-    <!-- ==================== ABA 2: EQUIPES E LÍDERES ==================== -->
+    <!-- ABA 2: EQUIPES -->
     <section id="tab-equipes" class="tab-content">
       <div class="teams-grid" id="teamsGrid"></div>
     </section>
@@ -578,9 +600,6 @@
   </div>
 
   <script>
-    /* =========================================================================
-       DADOS DOS PARTICIPANTES (INSERÇÃO BRUTA)
-       ========================================================================= */
     const DADOS_BRUTOS = [
       // ENGENHARIA DA COMPUTAÇÃO 2° SEMESTRE
       { nome: "Adryan Engel", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
@@ -590,7 +609,7 @@
       { nome: "Arthur de Souza Ferreira", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Arthur Hideki Schultz Oyama", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Arthur Marquardt", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Arthur Pereira Costa", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Arthur Pereira Costa", turma: "EC - 2º Sem", status: "ORGANIZACAO", equipe: "Organização" },
       { nome: "Bruno Schwabe", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Daniel Dalmann Pinto", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Daniel Leandro Costa", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
@@ -633,7 +652,7 @@
       { nome: "Rhuan Vitor Rodrigues de Oliveira", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Roberto dos Santos", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Ryan Valverde Menin", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Samuel Tavano Suzigan", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Samuel Tavano Suzigan", turma: "EC - 2º Sem", status: "ORGANIZACAO", equipe: "Organização" },
       { nome: "Tiffany Melo", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Wellington Kauã dos Santos Carvalho", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Yasmin Nakasato Madalena Ferri", turma: "EC - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
@@ -657,7 +676,7 @@
       { nome: "Iago Benjamin Oros de Almeida", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Isaac Wilian de Araújo Diniz", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Isabela Corrêa de Assis", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "João Ricardo Albuquerque Novaes", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "João Ricardo Albuquerque Novaes", turma: "EC - 4º Sem", status: "ORGANIZACAO", equipe: "Organização" },
       { nome: "Josenildo Barboza de Moraes", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Kaic Falcão da Silveira", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Kauan Moraes de Oliveira", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
@@ -670,7 +689,7 @@
       { nome: "Maiane Mayumi Onituka da Silva", turma: "EC - 4º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
       { nome: "Marco Antonio Dela Coletta", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Marcos Filipe Santos Araujo", turma: "EC - 4º Sem", status: "CONVOCADO", equipe: "Isaac" },
-      { nome: "Marcos Vinícius Ferreira de Paula", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Marcos Vinícius Ferreira de Paula", turma: "EC - 4º Sem", status: "ORGANIZACAO", equipe: "Organização" },
       { nome: "Maria Eugênia Valencio Nery", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Matthew Borges Cabral", turma: "EC - 4º Sem", status: "CONVOCADO", equipe: "Yasmin" },
       { nome: "Nicolas Candini Fadel", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
@@ -683,9 +702,9 @@
       { nome: "Wesley Victor Fonteles Trindade", turma: "EC - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
 
       // ENGENHARIA DA COMPUTAÇÃO 6° SEMESTRE
-      { nome: "Alisson Aldenir Silva", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Alisson Aldenir Silva", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
       { nome: "Bruno Avelino Alves", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Cleive dos Santos Costa", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Cleive dos Santos Costa", turma: "EC - 6º Sem", status: "ORGANIZACAO", equipe: "Organização" },
       { nome: "Guilherme Pires dos Santos", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Gustavo da Fonsêca Araújo Vieira", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Jenifer Cândido Gomes", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
@@ -693,7 +712,7 @@
       { nome: "Kristian Jarel Apaza Ordinola", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Leonardo de Souza Portugal", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Leonardo Rossetti Francatto", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Lucas Freitas Dias Gonçalves", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Lucas Freitas Dias Gonçalves", turma: "EC - 6º Sem", status: "ORGANIZACAO", equipe: "Organização" },
       { nome: "Lucas Kather Dziaduk", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
       { nome: "Luís Gabriel de Souza Alves", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Luís Otávio dos Santos Gasparini", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
@@ -704,7 +723,7 @@
       { nome: "Philipe Gonçalves Custodio", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Isaac" },
       { nome: "Rafael Barbosa Lindquist", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
       { nome: "Rafael Mendes Morais", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Rafael Nicolas Gomes de Carvalho", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
+      { nome: "Rafael Nicolas Gomes de Carvalho", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Yasmin" },
       { nome: "Renan Simão Lima", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Victor Herédia Moura", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
 
@@ -741,7 +760,7 @@
       { nome: "Mauricio Fernandes Franceschet", turma: "SI - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Pedro Rodrigues de Olaria Siqueira", turma: "SI - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Rafael Henrique Retorta Pereira da Silva", turma: "SI - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Raphael Silva Rios", turma: "SI - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Raphael Silva Rios", turma: "SI - 2º Sem", status: "ORGANIZACAO", equipe: "Organização" },
       { nome: "Samuell Alves dos Santos", turma: "SI - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Silas Duarte Silva", turma: "SI - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Vitor Hugo da Silva Souza", turma: "SI - 2º Sem", status: "SEM_EQUIPE", equipe: "" },
@@ -762,13 +781,10 @@
       { nome: "Mateo Ibarrola", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Matheus Dantas de Oliveira", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Sarah Cristina Soares Canela", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Victor Gustavo Junqueira", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Victoria Gabriella Saldanha Santos", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" }
+      { nome: "Victor Gustavo Junqueira", turma: "SI - 4º Sem", status: "ORGANIZACAO", equipe: "Organização" },
+      { nome: "Victoria Gabriella Saldanha Santos", turma: "SI - 4º Sem", status: "ORGANIZACAO", equipe: "Organização" }
     ];
 
-    /* =========================================================================
-       DEDUPLICAÇÃO EXATA E AGRUPAMENTO DE TURMAS
-       ========================================================================= */
     function normalizarLista(brutos) {
       const mapa = new Map();
 
@@ -787,8 +803,8 @@
           if (item.turma && !p.turmas.includes(item.turma)) {
             p.turmas.push(item.turma);
           }
-          if (item.status === 'CONVOCADO') {
-            p.status = 'CONVOCADO';
+          if (item.status === 'ORGANIZACAO' || item.status === 'CONVOCADO') {
+            p.status = item.status;
             p.equipe = item.equipe;
           }
         }
@@ -799,7 +815,6 @@
 
     const listaParticipantes = normalizarLista(DADOS_BRUTOS);
 
-    // Mapeamento de classes CSS de cor por turma
     function getTurmaClass(turmaStr) {
       if (turmaStr.includes('EC - 2º')) return 'tag-ec2';
       if (turmaStr.includes('EC - 4º')) return 'tag-ec4';
@@ -809,15 +824,33 @@
       return 'tag-ec2';
     }
 
-    /* =========================================================================
-       ESTRUTURA DOS LÍDERES
-       ========================================================================= */
     const NOMES_LIDERES = ["Isaac", "Maria Clara", "Pedro Valença", "Yasmin", "Felipe", "Luis"];
 
     function renderEquipes() {
       const teamsGrid = document.getElementById('teamsGrid');
       
-      teamsGrid.innerHTML = NOMES_LIDERES.map(lider => {
+      const membrosOrg = listaParticipantes.filter(p => p.status === 'ORGANIZACAO');
+      const orgCardHtml = `
+        <div class="team-card org-card">
+          <div class="team-header">
+            <span class="team-title">⚡ Equipe Organizadora</span>
+            <span class="team-count">${membrosOrg.length} membros</span>
+          </div>
+          <ul class="team-members-list">
+            ${membrosOrg.map(m => {
+              const tags = m.turmas.map(t => `<span class="turma-tag ${getTurmaClass(t)}">${t}</span>`).join(' ');
+              return `
+                <li class="team-member-item">
+                  <span class="member-name">${m.nome}</span>
+                  <div class="turmas-wrapper">${tags}</div>
+                </li>
+              `;
+            }).join('')}
+          </ul>
+        </div>
+      `;
+
+      const equipesCardsHtml = NOMES_LIDERES.map(lider => {
         const membros = listaParticipantes.filter(p => p.status === 'CONVOCADO' && p.equipe === lider);
         
         let listaHtml = '';
@@ -849,11 +882,10 @@
           </div>
         `;
       }).join('');
+
+      teamsGrid.innerHTML = orgCardHtml + equipesCardsHtml;
     }
 
-    /* =========================================================================
-       RENDERIZAÇÃO DA LISTA DE PARTICIPANTES & FILTROS
-       ========================================================================= */
     let currentStatusFilter = 'ALL';
     let currentTurmaFilter = 'ALL';
     let searchQuery = '';
@@ -865,20 +897,21 @@
 
     const totalCountEl = document.getElementById('totalCount');
     const convocadosCountEl = document.getElementById('convocadosCount');
+    const orgCountEl = document.getElementById('orgCount');
     const semEquipeCountEl = document.getElementById('semEquipeCount');
     const ausentesCountEl = document.getElementById('ausentesCount');
 
     function updateStats() {
       totalCountEl.textContent = listaParticipantes.length;
       convocadosCountEl.textContent = listaParticipantes.filter(p => p.status === 'CONVOCADO').length;
+      orgCountEl.textContent = listaParticipantes.filter(p => p.status === 'ORGANIZACAO').length;
       semEquipeCountEl.textContent = listaParticipantes.filter(p => p.status === 'SEM_EQUIPE').length;
       ausentesCountEl.textContent = listaParticipantes.filter(p => p.status === 'AUSENTE').length;
     }
 
     function getStatusLabel(p) {
-      if (p.status === 'CONVOCADO') {
-        return p.equipe ? `Convocado: ${p.equipe}` : 'Convocado';
-      }
+      if (p.status === 'ORGANIZACAO') return 'Organização';
+      if (p.status === 'CONVOCADO') return p.equipe ? `Convocado: ${p.equipe}` : 'Convocado';
       if (p.status === 'AUSENTE') return 'Ausente';
       return 'Sem Equipe';
     }
@@ -901,9 +934,10 @@
       }
 
       gridEl.innerHTML = filtrados.map(p => {
-        const statusClass = 
-          p.status === 'CONVOCADO' ? 'status-convocado' :
-          p.status === 'AUSENTE' ? 'status-ausente' : 'status-sem-equipe';
+        let statusClass = 'status-sem-equipe';
+        if (p.status === 'ORGANIZACAO') statusClass = 'status-org';
+        else if (p.status === 'CONVOCADO') statusClass = 'status-convocado';
+        else if (p.status === 'AUSENTE') statusClass = 'status-ausente';
 
         const labelStatus = getStatusLabel(p);
         const tags = p.turmas.map(t => `<span class="turma-tag ${getTurmaClass(t)}">${t}</span>`).join(' ');
@@ -922,7 +956,6 @@
       }).join('');
     }
 
-    // Controles de Abas
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -936,7 +969,6 @@
       });
     });
 
-    // Filtros
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value;
       renderParticipantes();
@@ -956,7 +988,6 @@
       });
     });
 
-    // Inicia tudo
     updateStats();
     renderParticipantes();
     renderEquipes();
