@@ -705,24 +705,24 @@
       { nome: "Alisson Aldenir Silva", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
       { nome: "Bruno Avelino Alves", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Cleive dos Santos Costa", turma: "EC - 6º Sem", status: "ORGANIZACAO", equipe: "Organização" },
-      { nome: "Guilherme Pires dos Santos", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Guilherme Pires dos Santos", turma: "EC - 6º Sem", status: "ORGANIZACAO", equipe: "Organização" },
       { nome: "Gustavo da Fonsêca Araújo Vieira", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Jenifer Cândido Gomes", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Kauã Martins dos Santos", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Maria Clara" },
       { nome: "Kristian Jarel Apaza Ordinola", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Leonardo de Souza Portugal", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Leonardo Rossetti Francatto", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Leonardo Rossetti Francatto", turma: "EC - 6º Sem", status: "AUSENTE", equipe: "" },
       { nome: "Lucas Freitas Dias Gonçalves", turma: "EC - 6º Sem", status: "ORGANIZACAO", equipe: "Organização" },
       { nome: "Lucas Kather Dziaduk", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
       { nome: "Luís Gabriel de Souza Alves", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Luís Otávio dos Santos Gasparini", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
-      { nome: "Luisa Felix de Souza", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Luisa Felix de Souza", turma: "EC - 6º Sem", status: "AUSENTE", equipe: "" },
       { nome: "Nathan Junio Gonçalves de Oliveira", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Maria Clara" },
       { nome: "Pedro Henrique Brito Adorno", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Pedro Reis Simões Valença", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
       { nome: "Philipe Gonçalves Custodio", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Isaac" },
       { nome: "Rafael Barbosa Lindquist", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Pedro Valença" },
-      { nome: "Rafael Mendes Morais", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Rafael Mendes Morais", turma: "EC - 6º Sem", status: "AUSENTE", equipe: "" },
       { nome: "Rafael Nicolas Gomes de Carvalho", turma: "EC - 6º Sem", status: "CONVOCADO", equipe: "Yasmin" },
       { nome: "Renan Simão Lima", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Victor Herédia Moura", turma: "EC - 6º Sem", status: "SEM_EQUIPE", equipe: "" },
@@ -768,14 +768,14 @@
 
       // SISTEMAS DA INFORMAÇÃO 4° SEMESTRE
       { nome: "Arthur Crippa de Oliveira", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Arthur Leão Silva", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Arthur Leão Silva", turma: "SI - 4º Sem", status: "AUSENTE", equipe: "" },
       { nome: "Davi Mendonça Modro", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "David Vieira de Freitas Oliveira", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Eder de Almeida Ferreira", turma: "SI - 4º Sem", status: "CONVOCADO", equipe: "Yasmin" },
       { nome: "Esdras Melâncton Cardoso Gaspar Gomes", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Gabriel Kramer Mota", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Gustavo Krause Santos", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
-      { nome: "Hudson Levi Ramalho de Lima", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
+      { nome: "Hudson Levi Ramalho de Lima", turma: "SI - 4º Sem", status: "AUSENTE", equipe: "" },
       { nome: "Isaac Pereira Cruz", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Joaby Isidoro de Barros", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
       { nome: "Mateo Ibarrola", turma: "SI - 4º Sem", status: "SEM_EQUIPE", equipe: "" },
@@ -803,7 +803,7 @@
           if (item.turma && !p.turmas.includes(item.turma)) {
             p.turmas.push(item.turma);
           }
-          if (item.status === 'ORGANIZACAO' || item.status === 'CONVOCADO') {
+          if (item.status === 'ORGANIZACAO' || item.status === 'CONVOCADO' || item.status === 'AUSENTE') {
             p.status = item.status;
             p.equipe = item.equipe;
           }
